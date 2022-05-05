@@ -1,28 +1,50 @@
+export enum BinOp {Plus = "PLUS", Minus = "MINUS", Mul = "MUL", Div = "DIV", Mod = "MOD", Equal = "EQUAL", Unequal = "UNEQUAL", Le = "LE", Ge = "GE", Lt = "LT", Gt = "GT", Is = "IS"}
+export enum UniOp {Not = "NOT", Neg = "NEG"}
+export type Literal = "None" | true | false | number
 
-export type Stmt =
-  | { tag: "define", name: string, value: Expr }
-  | { tag: "expr", expr: Expr }
+export type Type = "int" | "bool" | "none" | string
+export function isClass(a: Type) {
+    return a !== "int" && a !== "bool" && a !== "none"
+}
 
-export type Expr =
-    { tag: "num", value: number }
-  | { tag: "id", name: string }
-  | { tag: "binary", op: BinOp, left: Expr, right: Expr }
-  | { tag: "builtin1", name: string, arg: Expr }
-  | { tag: "builtin2", name: string, arg1: Expr, arg2: Expr}
+export type TypeDef = {name: string, type: Type}
+export type CondBody<A> = {cond: Expr<A>, body: Stmt<A>[]}
 
 
-export type Op = 
-    { tag: "add"}
-  | { tag: "minus"}
-  | { tag: "multiply"}
+export type FuncStmt<A> = { a?: A, tag: "func", name: string, params: TypeDef[], ret: Type, body: Stmt<A>[]}
+export type VarStmt<A> = { a?: A, tag: "var", var: TypeDef, value: Expr<A>}
+export type IfStmt<A> = { a?: A, tag: "if", if: CondBody<A>, elif: CondBody<A>[], else: Stmt<A>[]}
+export type AssignStmt<A> = { a?: A, tag: "assign", name: Expr<A>, value: Expr<A>}
+export type WhileStatement<A> = { a?: A, tag: "while", while: CondBody<A>}
+export type PassStmt<A> = { a?: A, tag: "pass"}
+export type ReturnStmt<A> = { a?: A, tag: "return", value: Expr<A>}
+export type ExprStmt<A> = { a?: A, tag: "expr", expr: Expr<A> }
+export type ClassStmt<A> = { a?: A, tag: "class", name: string, methods: FuncStmt<A>[], fields: VarStmt<A>[]}
 
-export type builtin1 = 
-    { tag: "print"}
-  | { tag: "abs"}
+export type LiteralExpr<A> = { a?: A, tag: "literal", value: Literal } 
+export type NameExpr<A> = { a?: A, tag: "name", name: string}
+export type UnaryExpr<A> = { a?: A, tag: "unary", op: UniOp, expr: Expr<A>}
+export type BinaryExpr<A> = { a?: A, tag: "binary", op: BinOp, lhs: Expr<A>, rhs: Expr<A>}
+export type CallExpr<A> = { a?: A, tag: "call", name: string, args: Expr<A>[]}
+export type GetFieldExpr<A> = { a?: A, tag: "getfield", obj: Expr<A>, name: string}
+export type MethodExpr<A> = { a?: A, tag: "method", obj: Expr<A>, name: string, args: Expr<A>[]}
 
-export type builtin2 = 
-  { tag: "max"}
-  | { tag: "min"}
-  | { tag: "pow"}
+export type Stmt<A> =
+    FuncStmt<A>
+    | VarStmt<A>
+    | AssignStmt<A>
+    | IfStmt<A>
+    | WhileStatement<A>
+    | PassStmt<A>
+    | ReturnStmt<A>
+    | ExprStmt<A>
+    | ClassStmt<A>
 
-export enum BinOp {Plus = "PLUS", Minus = "MINUS", Mul = "MUL"}
+export type Expr<A> =
+    | LiteralExpr<A>
+    | NameExpr<A>
+    | UnaryExpr<A>
+    | BinaryExpr<A>
+    | CallExpr<A>
+    | GetFieldExpr<A>
+    | MethodExpr<A>
