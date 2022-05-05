@@ -97,4 +97,4 @@ call_indirect ;; would call $B$f here
 - In `compiler.ts` (maybe a new file called `transform.ts`): we would perform the steps we metioned above to generate the correct code.
 
 ### Test
-Ten test cases for list are here: [link](https://github.com/Cjkkkk/cse231-final-update/blob/pa3/tests/pa4-inheritance.test.ts).
+Ten test cases for inheritance are here: [link](https://github.com/Cjkkkk/cse231-final-update/blob/pa3/tests/pa4-inheritance.test.ts).
