@@ -14,9 +14,12 @@ export function typeCheck(source: string) : Type {
         return "none"
     }
     const lastType = (lastStmt as ExprStmt<any>).expr.a;
-    if (lastType === "int" || lastType === "bool" || lastType === "none") return lastType;
+    if (lastType.tag === "int" || lastType.tag === "bool" || lastType.tag === "none") 
+        return lastType.tag;
+    else if (lastType.tag === "class") 
+        return CLASS(lastType.name);
     else {
-        return {tag: "object", class: lastType};
+        return "none";
     }
 }
 
@@ -26,6 +29,9 @@ export function typeCheck(source: string) : Type {
 export async function run(source: string) {
     const wasmSource = compile(source);
     try {
+        (importObject as any).check_if_none = function() {
+            return 0;
+        }
         const v = await runT(wasmSource, importObject);
         return v;
     } catch (err){
@@ -39,10 +45,16 @@ type Type =
   | "bool"
   | "none"
   | { tag: "object", class: string }
+  | { tag: "list", type: Type }
+  | { tag: "string" }
 
 export const NUM : Type = "int";
 export const BOOL : Type = "bool";
 export const NONE : Type = "none";
 export function CLASS(name : string) : Type { 
     return { tag: "object", class: name }
+};
+
+export function LIST( typ: Type ): Type {
+    return { tag: "list", type: typ }
 };
